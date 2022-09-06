@@ -46,4 +46,28 @@ UserSchema.methods.toJSON = function () {
   return user
 }
 
+UserSchema.static("checkCredentials", async function (email, plainPassword) {
+  // my own custom method attached to the UsersModel
+  // Given email, plainPassword this method should search in db if the user exists (by email), then compare the given password with the hashed one coming from the db. Then return a useful response.
+
+  // 1. Find the user by email
+  const user = await this.findOne({ email }) // "this" here represents the UsersModel
+
+  if (user) {
+    console.log("USER: ", user)
+    // 2. If the email is found --> compare plainPassword with the hashed one
+    const isMatch = await bcrypt.compare(plainPassword, user.password)
+
+    if (isMatch) {
+      // 3. If passwords they do match --> return the user
+      return user
+    } else {
+      return null
+    }
+  } else {
+    // 4. In case of either email not found or password not correct --> return null
+    return null
+  }
+})
+
 export default model("User", UserSchema)
