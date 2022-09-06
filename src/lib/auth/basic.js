@@ -20,6 +20,7 @@ export const basicAuthMiddleware = async (req, res, next) => {
 
     if (user) {
       // 4.a If credentials are ok --> you can go on
+      req.user = user // I am attaching the current valid user to the request object
       next()
     } else {
       // 4.b If credentials are NOT ok --> trigger an error (401)
